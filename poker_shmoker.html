@@ -1,0 +1,55 @@
+{% load staticfiles %}
+<head>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<style>
+		.player_info { position:absolute; width:100px; height:122px }
+		.player_cards { width:100px; height:70px }
+		.player_stack {  }
+		.card { width:50px; height:70px }
+		.poker_table {position:absolute; top:230px; left:320px}
+		.money {color:WHITE }
+	</style>
+</head>
+<body>
+    {% csrf_token %}
+	<div id="app" >
+		
+		<select id="num_players" v-model="numPlayers" v-on:change="newGame" >
+			<option value="" default>Please choose number of players</option>
+			<option value="2" >2 opponents</option>
+			<option value="6" >6 opponents</option>
+			<option value="9" >9 opponents</option>
+		</select>
+		
+		<div style="background:black" id="action_bar" >
+			<h2 style="color:white" >Action Buttons</h2>
+			<div id="action_bar" v-show="pTurn" >
+				<button class="fold" v-on:click="playerTurn('fold')" >Fold</button>
+				<button class="call" v-on:click="playerTurn('call')" >Call</button>
+				<button class="check" v-on:click="playerTurn('check')" >Check</button>
+				<button class="bet" v-on:click="playerTurn('bet')" >Bet/Raise</button>
+				<input v-model="pBet" class="bet_amnt" type="text" style="width:50px" ></input>
+			</div>
+		</div>
+		
+		<div id="table" style="position:relative;background:green;height: 500px;width: 901px;margin-left:0px ;margin-right: auto;border-radius:1000px; float:left" >
+			<poker-table v-bind:pot="table.pot" v-bind:cards="table.cards" ></poker-table>
+			<player v-for="player in players" :key="player.id"
+				v-bind:id="player.id"
+				v-bind:stack="player.stack"
+				v-bind:bet="player.bet"
+				v-bind:cards="player.cards"
+				v-bind:top="player.position.top"
+				v-bind:left="player.position.left"
+				v-bind:button="player.button"
+				v-bind:display="player.display"
+				v-bind:bet_top="player.bet_position.top"
+				v-bind:bet_left="player.bet_position.left"
+				v-bind:turn="player.turn"
+			></player>
+		</div>
+		</div>
+	</div>
+</body>
+<script src="{%  static "js/poker_shmoker.js" %} " ></script>
